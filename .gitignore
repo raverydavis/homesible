@@ -1,1 +1,2 @@
-.secretfile
+.secretfile-*
+.DS_Store
