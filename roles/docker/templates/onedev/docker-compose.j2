@@ -1,0 +1,11 @@
+services:
+  onedev: # TODO setup with db
+    container_name: {{ ansible_facts['onedev_container_name'] | default('onedev') }}
+    image: docker.io/1dev/server:{{ ansible_facts['onedev_version'] | default('latest') }}
+    ports:
+      - {{ ansible_facts['onedev_published_port_http'] | default('6610') }}:6610
+      - {{ ansible_facts['onedev_published_port_https'] | default('6611') }}:6611
+    env_file: {{ ansible_facts['onedev_env_file'] | default('.secretfile-onedev') }}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - {{ ansible_facts['onedev_data_path'] | default('/opt/onedev') }}:/opt/onedev

@@ -1,0 +1,232 @@
+services:
+  gluetun:
+    container_name: {{ ansible_facts['gluetun_container_name'] | default('gluetun') }}
+    image: ghcr.io/qdm12/gluetun:{{ ansible_facts['gluetun_version'] | default('latest') }}
+    privileged: true # TODO verify if needed
+    restart: {{ ansible_facts['gluetun_restart_policy'] | default('always') }}
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    ports:
+      - 8888:8888/tcp # HTTP proxy
+      - 8388:8388/tcp # Shadowsocks
+      - 8388:8388/udp # Shadowsocks
+      - {{ ansible_facts['deluge_published_port'] | default('8112') }}:8112 # deluge webui
+      - 6881:6881 # deluge
+      - 6881:6881/udp # deluge
+      {% if ansible_facts['enable_stremio'] is true %}
+      - {{ ansible_facts['stremio_service_http_published_port'] | default('11470') }}:11470 # stremio-service
+      - {{ ansible_facts['stremio_service_https_published_port'] | default('12470') }}:12470 # stremio-service
+      - {{ ansible_facts['stremio_web_published_port'] | default('8088') }}:8080 # stremio-web
+      {% endif %}
+      {% if ansible_facts['enable_prowlarr'] is true %}
+      - {{ ansible_facts['prowlarr_published_port'] | default('9696') }}:9696 # prowlarr
+      {% endif %}
+      {% if ansible_facts['enable_sonarr'] is true %}
+      - {{ ansible_facts['sonarr_published_port'] | default('8989') }}:8989 # sonarr
+      {% endif %}
+      {% if ansible_facts['enable_radarr'] is true %}
+      - {{ ansible_facts['radarr_published_port'] | default('7878') }}:7878 # radarr
+      {% endif %}
+      {% if ansible_facts['enable_readarr'] is true %}
+      - {{ ansible_facts['readarr_published_port'] | default('8787') }}:8787 # readarr
+      {% endif %}
+      {% if ansible_facts['enable_lidarr'] is true %}
+      - {{ ansible_facts['lidarr_published_port'] | default('8686') }}:8686 # lidarr
+      {% endif %}
+    env_file: {{ ansible_facts['gluetun_env_file'] | default('.secretfile-gluetun') }}
+    volumes:
+      - {{ ansible_facts['gluetun_data_path'] | default('/opt/gluetun') }}:/gluetun
+
+  # Torrent client
+  deluge:
+    container_name: {{ ansible_facts['deluge_container_name'] | default('deluge') }}
+    image: lscr.io/linuxserver/deluge:{{ ansible_facts['deluge_version'] | default('latest') }}
+    depends_on:
+      {{ ansible_facts['gluetun_container_name'] | default('gluetun') }}:
+        condition: service_healthy
+        restart: true
+    network_mode: "service:{{ ansible_facts['gluetun_container_name'] | default('gluetun') }}"
+    restart: {{ ansible_facts['deluge_restart_policy'] | default('always') }}
+    env_file: {{ ansible_facts['deluge_env_file'] | default('.secretfile-deluge') }}
+    volumes:
+      - {{ ansible_facts['media_downloads_path'] | default('/mnt/media/downloads') }}:/downloads
+      - {{ ansible_facts['deluge_config_path'] | default('/opt/deluge') }}:/config
+
+  {% if ansible_facts['enable_stremio'] is true %}
+  # Streaming service
+  stremio-service:
+    container_name: {{ ansible_facts['stremio_container_name'] | default('stremio') }}
+    image: docker.io/tsaridas/stremio-docker:{{ ansible_facts['stremio_docker_version'] | default('latest') }}
+    privileged: true # TODO verify if needed
+    depends_on:
+      {{ ansible_facts['gluetun_container_name'] | default('gluetun') }}:
+        condition: service_healthy
+        restart: true
+    network_mode: "service:{{ ansible_facts['gluetun_container_name'] | default('gluetun') }}"
+    restart: {{ ansible_facts['stremio_restart_policy'] | default('unless-stopped') }}
+    env_file: {{ ansible_facts['stremio_env_file'] | default('.secretfile-stremio') }}
+    volumes:
+      - {{ ansible_facts['stremio_data_path'] | default('/opt/stremio') }}:/root/.stremio-server
+  {% endif %}
+
+  {% if ansible_facts['enable_prowlarr'] is true %}
+  # Prowlarr is our torrent indexer/searcher. Sonarr/Radarr use Prowlarr as a source
+  prowlarr:
+    container_name: {{ ansible_facts['prowlarr_container_name'] | default('prowlarr') }}
+    image: lscr.io/linuxserver/prowlarr:{{ ansible_facts['prowlarr_version'] | default('latest') }}
+    depends_on:
+      {{ ansible_facts['gluetun_container_name'] | default('gluetun') }}:
+        condition: service_healthy
+        restart: true
+      {{ ansible_facts['deluge_container_name'] | default('deluge') }}:
+        condition: service_started
+        restart: true
+    network_mode: "service:{{ ansible_facts['gluetun_container_name'] | default('gluetun') }}"
+    restart: {{ ansible_facts['prowlarr_restart_policy'] | default('unless-stopped') }}
+    env_file: {{ ansible_facts['prowlarr_env_file'] | default('.secretfile-prowlarr') }}
+    volumes:
+      - {{ ansible_facts['prowlarr_data_path'] | default('/opt/prowlarr') }}:/config
+  {% endif %}
+
+  {% if ansible_facts['enable_sonarr'] is true %}
+# Sonarr is used to query, add downloads to the download queue and index TV shows
+  sonarr:
+    container_name: {{ ansible_facts['sonarr_container_name'] | default('sonarr') }}
+    image: lscr.io/linuxserver/sonarr:{{ ansible_facts['sonarr_version'] | default('latest') }}
+    depends_on:
+      {{ ansible_facts['gluetun_container_name'] | default('gluetun') }}:
+        condition: service_healthy
+        restart: true
+      {{ ansible_facts['deluge_container_name'] | default('deluge') }}:
+        condition: service_started
+        restart: true
+    network_mode: "service:{{ ansible_facts['gluetun_container_name'] | default('gluetun') }}"
+    restart: {{ ansible_facts['sonarr_restart_policy'] | default('unless-stopped') }}
+    env_file: {{ ansible_facts['sonarr_env_file'] | default('.secretfile-sonarr') }}
+    volumes:
+      - {{ ansible_facts['media_tvshows_path'] | default('/mnt/media/tvshows') }}:/tvshows
+      - {{ ansible_facts['media_downloads_path'] | default('/mnt/media/downloads') }}:/downloads
+      - {{ ansible_facts['sonarr_data_path'] | default('/opt/sonarr') }}:/config
+  {% endif %}
+
+  {% if ansible_facts['enable_radarr'] is true %}
+# Radarr is used to query, add downloads to the download queue and index Movies
+  radarr:
+    container_name: {{ ansible_facts['radarr_container_name'] | default('radarr') }}
+    image: lscr.io/linuxserver/radarr:{{ ansible_facts['radarr_version'] | default('latest') }}
+    depends_on:
+      {{ ansible_facts['gluetun_container_name'] | default('gluetun') }}:
+        condition: service_healthy
+        restart: true
+      {{ ansible_facts['deluge_container_name'] | default('deluge') }}:
+        condition: service_started
+        restart: true
+    network_mode: "service:{{ ansible_facts['gluetun_container_name'] | default('gluetun') }}"
+    restart: {{ ansible_facts['radrr_restart_policy'] | default('unless-stopped') }}
+    env_file: {{ ansible_facts['radarr_env_file'] | default('.secretfile-radarr') }}
+    volumes:
+      - {{ ansible_facts['media_movies_path'] | default('/mnt/media/movies') }}:/movies
+      - {{ ansible_facts['media_downloads_path'] | default('/mnt/media/downloads') }}:/downloads
+      - {{ ansible_facts['radarr_data_path'] | default('/opt/radarr') }}:/config
+  {% endif %}
+
+  {% if ansible_facts['enable_readarr'] is true %}
+  readarr:
+    container_name: {{ ansible_facts['readarr_container_name'] | default('readarr') }}
+    image: lscr.io/linuxserver/readarr:{{ ansible_facts['readarr_version'] | default('nightly') }}
+    depends_on:
+      {{ ansible_facts['gluetun_container_name'] | default('gluetun') }}:
+        condition: service_healthy
+        restart: true
+      {{ ansible_facts['deluge_container_name'] | default('deluge') }}:
+        condition: service_started
+        restart: true
+    network_mode: "service:{{ ansible_facts['gluetun_container_name'] | default('gluetun') }}"
+    restart: {{ ansible_facts['readarr_restart_policy'] | default('unless-stopped') }}
+    env_file: {{ ansible_facts['readarr_env_file'] | default('.secretfile-readarr') }}
+    volumes:
+      - {{ ansible_facts['media_audiobooks_path'] | default('/mnt/media/audiobooks') }}:/audiobooks
+      - {{ ansible_facts['media_podcasts_path'] | default('/mnt/media/podcasts') }}:/podcasts
+      - {{ ansible_facts['media_downloads_path'] | default('/mnt/media/downloads') }}:/downloads
+  {% endif %}
+
+  {% if ansible_facts['enable_lidarr'] is true %}
+  lidarr:
+    container_name: {{ ansible_facts['lidarr_container_name'] | default('lidarr') }}
+    image: lscr.io/linuxserver/lidarr:{{ ansible_facts['lidarr_version'] | default('latest') }}
+    depends_on:
+      {{ ansible_facts['gluetun_container_name'] | default('gluetun') }}:
+        condition: service_healthy
+        restart: true
+      {{ ansible_facts['deluge_container_name'] | default('deluge') }}:
+        condition: service_started
+        restart: true
+    network_mode: "service:{{ ansible_facts['gluetun_container_name'] | default('gluetun') }}"
+    restart: {{ ansible_facts['lidarr_restart_policy'] | default('unless-stopped') }}
+    env_file: {{ ansible_facts['lidarr_env_file'] | default('.secretfile-lidarr') }}
+    volumes:
+      - {{ ansible_facts['media_music_path'] | default('/mnt/media/music') }}:/music
+      - {{ ansible_facts['media_downloads_path'] | default('/mnt/media/downloads') }}:/downloads
+      - {{ ansible_facts['lidarr_data_path'] | default('/opt/lidarr') }}:/config
+      {% if ansible_facts['lidarr_enable_custom_scripts'] is true %}
+      - {{ ansible_facts['lidarr_custom_services_path'] | default('/opt/lidarr') }}:/custom-services.d
+      - {{ ansible_facts['lidarr_custom_services_install_script'] | default('/opt/lidarr') }}:/custom-cont-init.d
+      {% endif %}
+  {% endif %}
+
+  {% if ansible_facts['enable_bazarr'] is true %}
+  bazarr:
+    container_name: {{ ansible_facts['bazarr_container_name'] | default('bazarr') }}
+    image: lscr.io/linuxserver/bazarr:{{ ansible_facts['bazarr_version'] | default('latest') }}
+    depends_on:
+      {{ ansible_facts['sonarr_container_name'] | default('sonarr') }}:
+        condition: service_started
+        restart: true
+      {{ ansible_facts['radarr_container_name'] | default('radarr') }}:
+        condition: service_started
+        restart: true
+    restart: {{ ansible_facts['bazarr_restart_policy'] | default('unless-stopped') }}
+    ports:
+      - {{ ansible_facts['bazarr_published_port'] | default('6767') }}:6767 # bazarr
+    env_file: {{ ansible_facts['bazarr_env_file'] | default('.secretfile-bazarr') }}
+    volumes:
+      - {{ ansible_facts['media_tvshows_path'] | default('/mnt/media/tvshows') }}:/tvshows
+      - {{ ansible_facts['media_movies_path'] | default('/mnt/media/movies') }}:/movies
+      - {{ ansible_facts['bazarr_data_path'] | default('/opt/bazarr') }}:/config
+  {% endif %}
+
+  {% if ansible_facts['enable_recyclarr'] is true %}
+  recyclarr:
+    container_name: {{ ansible_facts['recyclarr_container_name'] | default('recyclarr') }}
+    image: ghcr.io/recyclarr/recyclarr:{{ ansible_facts['recyclarr_version'] | default('latest') }}
+    depends_on:
+      {{ ansible_facts['sonarr_container_name'] | default('sonarr') }}:
+        condition: service_started
+        restart: true
+      {{ ansible_facts['radarr_container_name'] | default('radarr') }}:
+        condition: service_started
+        restart: true
+    restart: {{ ansible_facts['recyclarr_restart_policy'] | default('unless-stopped') }}
+    user: 1000:1000
+    volumes:
+      - {{ ansible_facts['recyclarr_data_path'] | default('/opt/recyclarr') }}:/config
+  {% endif %}
+
+  {% if ansible_facts['enable_doplarr'] is true %}
+  doplarr:
+    container_name: {{ ansible_facts['doplarr_container_name'] | default('doplarr') }}
+    image: lscr.io/linuxserver/doplarr:{{ ansible_facts['doplarr_version'] | default('latest') }}
+    depends_on:
+      {{ ansible_facts['sonarr_container_name'] | default('sonarr') }}:
+        condition: service_started
+        restart: true
+      {{ ansible_facts['radarr_container_name'] | default('radarr') }}:
+        condition: service_started
+        restart: true
+    restart: {{ ansible_facts['recyclarr_restart_policy'] | default('unless-stopped') }}
+    env_file: {{ ansible_facts['doplarr_env_file'] | default('.secretfile-doplarr') }}
+    volumes:
+      - {{ ansible_facts['doplarr_data_path'] | default('/opt/doplarr') }}:/config
+  {% endif %}

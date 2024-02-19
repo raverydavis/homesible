@@ -1,0 +1,10 @@
+services:
+  mealie: # Basic Deployment - TODO db and email deployment
+    container_name: {{ ansible_facts['mealie_container_name'] | default('mealie') }}
+    image: ghcr.io/mealie-recipes/mealie:{{ ansible_facts['mealie_version'] | default('latest') }}
+    restart: {{ ansible_facts['mealie_restart_policy'] | default('unless-stopped') }}
+    ports:
+      - {{ ansible_facts['mealie_published_port'] | default('9000') }}:9000
+    env_file: {{ ansible_facts['mealie_env_file'] | default('.secretfile-mealie') }}
+    volumes:
+      - {{ ansible_facts['mealie_config_path'] | default('/opt/mealie') }}:/app/data

@@ -1,0 +1,13 @@
+services:
+# Watchtower is going to keep our instances updated
+  watchtower:
+    container_name: {{ ansible_facts['watchtower_container_name'] | default('watchtower') }}
+    image: ghcr.io/containrrr/watchtower:{{ ansible_facts['watchtower_version'] | default('latest') }}
+    restart: {{ ansible_facts['watchtower_restart_policy'] | default('unless-stopped') }}
+    environment:
+      - WATCHTOWER_CLEANUP=true # Watchtower will remove the old image after restarting a container with a new image. Use this option to prevent the accumulation of orphaned images on your system as containers are updated. - https://containrrr.dev/watchtower/arguments/#cleanup
+      - WATCHTOWER_INCLUDE_STOPPED=true # Will also include created and exited containers. - https://containrrr.dev/watchtower/arguments/#include_stopped
+      - WATCHTOWER_REVIVE_STOPPED=true # Start any stopped containers that have had their image updated. This argument is only usable with WATCHTOWER_INCLUDE_STOPPED=true. - https://containrrr.dev/watchtower/arguments/#revive_stopped
+      - WATCHTOWER_SCHEDULE="0 0 * * 1,4" # At 00:00 on Monday and Thursday. - https://crontab.guru/#0_0_*_*_1,4
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock

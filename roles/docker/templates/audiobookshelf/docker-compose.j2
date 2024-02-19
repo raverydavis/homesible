@@ -1,0 +1,12 @@
+services:
+  audiobookshelf:
+    container_name: {{ ansible_facts['audiobookshelf_container_name'] | default('audiobookshelf') }}
+    image: ghcr.io/advplyr/audiobookshelf:{{ ansible_facts['audiobookshelf_version'] | default('latest') }}
+    restart: {{ ansible_facts['audiobookshelf_restart_policy'] | default('unless-stopped') }}
+    ports:
+      - {{ ansible_facts['audiobookshelf_published_port'] | default('8000') }}:80
+    volumes:
+      - {{ ansible_facts['audiobookshelf_audiobooks_path'] | default('/opt/audiobookshelf/audiobooks') }}:/audiobooks
+      - {{ ansible_facts['audiobookshelf_podcasts_path'] | default('/opt/audiobookshelf/podcasts') }}:/podcasts
+      - {{ ansible_facts['audiobookshelf_metadata_path'] | default('/opt/audiobookshelf/metadata') }}:/metadata
+      - {{ ansible_facts['audiobookshelf_db_path'] | default('/opt/audiobookshelf/config') }}:/config

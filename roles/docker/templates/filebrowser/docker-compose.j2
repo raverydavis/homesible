@@ -1,0 +1,13 @@
+services:
+# Simple file browser - useful for quickly checking files, uploading/downloading files, etc. #
+  filebrowser:
+    container_name: {{ ansible_facts['filebrowser_container_name'] | default('filebrowser') }}
+    image: docker.io/filebrowser/filebrowser:{{ ansible_facts['filebrowser_version'] | default('latest') }}
+    ports:
+      - {{ ansible_facts['filebrowser_published_port'] | default('8080') }}:80
+    restart: {{ ansible_facts['filebrowser_restart_policy'] | default('unless-stopped') }}
+    env_file: {{ ansible_facts['filebrowser_env_file'] | default('.secretfile-filebrowser') }}
+    volumes:
+      - {{ ansible_facts['filebrowser_file_serve'] | default('/') }}:/srv # by default serve all directories
+      - {{ ansible_facts['filebrowser_database_path'] | default('/opt/filebrowser/db') }}:/database
+      - {{ ansible_facts['filebrowser_config_path'] | default('/opt/filebrowser/config') }}:/config
