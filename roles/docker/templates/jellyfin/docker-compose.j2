@@ -1,21 +1,21 @@
 services:
   jellyfin:
-    container_name: {{ ansible_facts['jellyfin_container_name'] | default('jellyfin') }}
-    image: lscr.io/linuxserver/jellyfin:{{ ansible_facts['jellyfin_version'] | default('latest') }}
-    restart: {{ ansible_facts['jellyfin_restart_policy'] | default('unless-stopped') }}
+    container_name: {{ jellyfin_container_name | default('jellyfin') }}
+    image: lscr.io/linuxserver/jellyfin:{{ jellyfin_version | default('latest') }}
+    restart: {{ jellyfin_restart_policy | default('unless-stopped') }}
     ports:
-      - {{ ansible_facts['jellyfin_published_port'] | default('8096') }}:8096
-      {% if ansible_facts['jellyfin_https_webui'] is true %}
-      - 8920:8920 # optional Https webUI (you need to set up your own certificate).
+      - {{ jellyfin_published_http_port | default('8096') }}:8096
+      {% if jellyfin_https_webui is true %}
+      - {{ jellyfin_published_https_port | default('8920') }}:8920 # optional Https webUI (you need to set up your own certificate).
       {% endif %}
-      {% if ansible_facts['jellyfin_local_network_discovery'] is true %}
+      {% if jellyfin_local_network_discovery is true %}
       - 7359:7359/udp # optional Allows clients to discover Jellyfin on the local network.
       {% endif %}
-      {% if ansible_facts['jellyfin_service_discovery'] is true %}
+      {% if jellyfin_service_discovery is true %}
       - 1900:1900/udp # optional Service discovery used by DNLA and clients.
       {% endif %}
-   env_file: {{ ansible_facts['jellyfin_env_file'] | default('.secretfile-jellyfin') }}
+   env_file: {{ jellyfin_env_file | default('.secretfile-jellyfin') }}
     volumes:
-      - {{ ansible_facts['jellyfin_config_path'] | default('/opt/jellyfin') }}:/config
-      - {{ ansible_facts['media_tvshows_path'] | default('/mnt/media/tvshows') }}:/data/tvshows
-      - {{ ansible_facts['media_movies_path'] | default('/mnt/media/movies') }}:/data/movies
+      - {{ jellyfin_config_path | default('/opt/jellyfin') }}:/config
+      - {{ media_tvshows_path | default('/mnt/media/tvshows') }}:/data/tvshows
+      - {{ media_movies_path | default('/mnt/media/movies') }}:/data/movies

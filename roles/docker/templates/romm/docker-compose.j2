@@ -1,10 +1,10 @@
 services:  
   romm: # Basic Setup - TODO mariadb and redis
-    container_name: {{ ansible_facts['romm_container_name'] | default('romm') }}
-    image: docker.io/zurdi15/romm:{{ ansible_facts['romm_version'] | default('latest') }}
-    restart: {{ ansible_facts['romm_restart_policy'] | default('unless-stopped') }}
+    container_name: {{ romm_container_name | default('romm') }}
+    image: docker.io/zurdi15/romm:{{ romm_version | default('latest') }}
+    restart: {{ romm_restart_policy | default('unless-stopped') }}
     ports:
-      - {{ ansible_facts['romm_published_port'] | default('8081') }}:8080
-    env_file: {{ ansible_facts['romm_env_file'] | default('.secretfile-romm') }}
+      - {{ romm_published_port | default('8081') }}:8080
+    env_file: {{ romm_env_file | default('.secretfile-romm') }}
     volumes:
-      - {{ ansible_facts['romm_library_path'] | default('/opt/romm/library') }}:/romm/library
+      - {{ romm_library_path | default('/opt/romm/library') }}:/romm/library

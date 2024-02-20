@@ -1,26 +1,20 @@
 services:
   ryot:
-    container_name: {{ ansible_facts['ryot_container_name'] | default('ryot') }}
-    image: ghcr.io/ignisda/ryot:{{ ansible_facts['ryot_version'] | default('latest') }}
-    restart: {{ ansible_facts['ryot_restart_policy'] | default('unless-stopped') }}
+    container_name: {{ ryot_container_name | default('ryot') }}
+    image: ghcr.io/ignisda/ryot:{{ ryot_version | default('latest') }}
+    restart: {{ ryot_restart_policy | default('unless-stopped') }}
     depends_on:
-      {{ ansible_facts['ryot_db_container_name'] | default('ryot-db') }}:
+      {{ ryot_db_container_name | default('ryot-db') }}:
         condition: service_started
         restart: true
     ports:
-      - {{ ansible_facts['ryot_published_port'] | default('8001') }}:8000
-    env_file: {{ ansible_facts['ryot_env_file'] | default('.secretfile-ryot') }}
-    environment:
-      - DATABASE_URL=postgres://postgres:postgres@ryot-db:5432/postgres
+      - {{ ryot_published_port | default('8001') }}:8000
+    env_file: {{ ryot_env_file | default('.secretfile-ryot') }}
 
   ryot-db:
-    container_name: {{ ansible_facts['ryot_db_container_name'] | default('ryot-db') }}
-    image: docker.io/library/postgres:{{ ansible_facts['ryot_db_version'] | default('16-alpine') }}
-    restart: {{ ansible_facts['ryot_db_restart_policy'] | default('unless-stopped') }}
-    env_file: {{ ansible_facts['ryot_db_env_file'] | default('.secretfile-ryot-db') }}
-    environment:
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_DB=postgres
+    container_name: {{ ryot_db_container_name | default('ryot-db') }}
+    image: docker.io/library/postgres:{{ ryot_db_version | default('16-alpine') }}
+    restart: {{ ryot_db_restart_policy | default('unless-stopped') }}
+    env_file: {{ ryot_db_env_file | default('.secretfile-ryot-db') }}
     volumes:
-      - {{ ansible_facts['ryot_db_path'] | default('/opt/ryot') }}:/var/lib/postgresql/data
+      - {{ ryot_db_path | default('/opt/ryot') }}:/var/lib/postgresql/data

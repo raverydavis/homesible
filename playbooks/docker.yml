@@ -7,36 +7,54 @@
     services:
       - name: audiobookshelf
         enabled: "{{ audiobookshelf_enabled | default('false') }}"
+        env_file: "{{ audiobookshelf_env_file | default('.secretfile-audiobookshelf') }}"
       - name: filebrowser
         enabled: "{{ filebrowser_enabled | default('false') }}"
+        env_file: "{{ filebrowser_env_file | default('.secretfile-filebrowser') }}"
       - name: jellyfin
         enabled: "{{ jellyfin_enabled | default('false') }}"
+        env_file: "{{ jellyfin_env_file | default('.secretfile-jellyfin') }}"
       - name: mealie
         enabled: "{{ mealie_enabled | default('false') }}"
+        env_file: "{{ mealie_env_file | default('.secretfile-mealie') }}"
       - name: media-server
         enabled: "{{ media_server_enabled | default('false') }}"
       - name: stremio
         enabled: "{{ stremio_enabled | default('false') }}"
+        env_file: "{{ stremio_env_file | default('.secretfile-stremio') }}"
       - name: prowlarr
         enabled: "{{ prowlarr_enabled | default('false') }}"
+        env_file: "{{ prowlarr_env_file | default('.secretfile-prowlarr') }}"
       - name: sonarr
         enabled: "{{ sonarr_enabled | default('false') }}"
+        env_file: "{{ sonarr_env_file | default('.secretfile-sonarr') }}"
       - name: radarr
         enabled: "{{ radarr_enabled | default('false') }}"
+        env_file: "{{ radarr_env_file | default('.secretfile-radarr') }}"
       - name: readarr
         enabled: "{{ readarr_enabled | default('false') }}"
+        env_file: "{{ readarr_env_file | default('.secretfile-readarr') }}"
       - name: lidarr
         enabled: "{{ lidarr_enabled | default('false') }}"
+        env_file: "{{ lidarr_env_file | default('.secretfile-lidarr') }}"
+      - name: recyclarr
+        enabled: "{{ recyclarr_enabled | default('false') }}"
+        env_file: "{{ recyclarr_env_file | default('.secretfile-recyclarr') }}"
       - name: doplarr
         enabled: "{{ doplarr_enabled | default('false') }}"
+        env_file: "{{ doplarr_env_file | default('.secretfile-doplarr') }}"
       - name: onedev
         enabled: "{{ onedev_enabled | default('false') }}"
+        env_file: "{{ onedev_env_file | default('.secretfile-onedev') }}"
       - name: romm
         enabled: "{{ romm_enabled | default('false') }}"
+        env_file: "{{ romm_env_file | default('.secretfile-romm') }}"
       - name: ryot
         enabled: "{{ ryot_enabled | default('false') }}"
+        env_file: "{{ ryot_env_file | default('.secretfile-ryot') }}"
       - name: watchtower
         enabled: "{{ watchtower_enabled | default('false') }}"
+        env_file: "{{ watchtower_env_file | default('.secretfile-watchtower') }}"
   pre_tasks:
     - set_fact:
         docker_compose_path: "{{ docker_compose_path | default('/opt/docker') }}"
@@ -46,6 +64,7 @@
         tasks_from: create-docker-compose
       vars:
         docker_service: "{{ item.name }}"
+        env_file: "{{ item.env_file }}"
       loop: "{{ services }}"
       when: item.enabled is true
       loop_control:

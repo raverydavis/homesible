@@ -13,29 +13,29 @@
 - name: "Create {{ docker_service }} .secretfile at {{ docker_compose_path }}"
   ansible.builtin.template:
     src: "templates/{{ docker_service }}/.secretfile.j2"
-    dest: "{{ docker_compose_path }}/{{ docker_service }}/.secretfile-{{ docker_service }}"
-  when: not docker_service is match("(media-server|stremio|prowlarr)")
+    dest: "{{ docker_compose_path }}/{{ docker_service }}/{{ env_file }}"
+  when: not docker_service is match("(media-server|stremio|prowlarr|sonarr|radarr|readarr|lidarr|recyclarr|doplarr)")
 
 - name: "Create setup for {{ docker_service }} .secretfiles at {{ docker_compose_path }}"
   ansible.builtin.template:
     src: "templates/{{ docker_service }}/secrets/gluetun.secretfile.j2"
-    dest: "{{ docker_compose_path }}/{{ docker_service }}/.secretfile-gluetun"
+    dest: "{{ docker_compose_path }}/{{ docker_service }}/{{ gluetun_env_file }}"
   when: docker_service == "media-server"
 
 - name: "Create setup for {{ docker_service }} .secretfiles at {{ docker_compose_path }}"
   ansible.builtin.template:
     src: "templates/{{ docker_service }}/secrets/deluge.secretfile.j2"
-    dest: "{{ docker_compose_path }}/{{ docker_service }}/.secretfile-deluge"
+    dest: "{{ docker_compose_path }}/{{ docker_service }}/{{ deluge_env_file }}"
   when: docker_service == "media-server"
 
 - name: "Create setup for {{ docker_service }} .secretfiles at {{ docker_compose_path }}"
   ansible.builtin.template:
     src: "templates/media-server/secrets/{{ docker_service }}.secretfile.j2"
     dest: "{{ docker_compose_path }}/media-server/.secretfile-{{ docker_service }}"
-  when: docker_service is match("(stremio|prowlarr)")
+  when: docker_service is match("(stremio|prowlarr|sonarr|radarr|readarr|lidarr|recyclarr|doplarr)")
 
 - name: "Create {{ docker_service }} docker-compose at {{ docker_compose_path }}"
   ansible.builtin.template:
     src: "templates/{{ docker_service }}/docker-compose.j2"
     dest: "{{ docker_compose_path }}/{{ docker_service }}/docker-compose.yml"
-  when: not docker_service is match("(stremio|prowlarr)")
+  when: not docker_service is match("(stremio|prowlarr|sonarr|radarr|readarr|lidarr|recyclarr|doplarr)")
