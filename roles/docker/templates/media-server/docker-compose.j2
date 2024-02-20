@@ -15,24 +15,24 @@ services:
       - {{ deluge_published_port | default('8112') }}:8112 # deluge webui
       - 6881:6881 # deluge
       - 6881:6881/udp # deluge
-      {% if enable_stremio is true %}
+      {% if stremio_enabled is true %}
       - {{ stremio_service_http_published_port | default('11470') }}:11470 # stremio-service
       - {{ stremio_service_https_published_port | default('12470') }}:12470 # stremio-service
       - {{ stremio_web_published_port | default('8088') }}:8080 # stremio-web
       {% endif %}
-      {% if enable_prowlarr is true %}
+      {% if prowlarr_enabled is true %}
       - {{ prowlarr_published_port | default('9696') }}:9696 # prowlarr
       {% endif %}
-      {% if enable_sonarr is true %}
+      {% if sonarr_enabled is true %}
       - {{ sonarr_published_port | default('8989') }}:8989 # sonarr
       {% endif %}
-      {% if enable_radarr is true %}
+      {% if radarr_enabled is true %}
       - {{ radarr_published_port | default('7878') }}:7878 # radarr
       {% endif %}
-      {% if enable_readarr is true %}
+      {% if readarr_enabled is true %}
       - {{ readarr_published_port | default('8787') }}:8787 # readarr
       {% endif %}
-      {% if enable_lidarr is true %}
+      {% if lidarr_enabled is true %}
       - {{ lidarr_published_port | default('8686') }}:8686 # lidarr
       {% endif %}
     env_file: {{ gluetun_env_file | default('.secretfile-gluetun') }}
@@ -54,7 +54,7 @@ services:
       - {{ media_downloads_path | default('/mnt/media/downloads') }}:/downloads
       - {{ deluge_config_path | default('/opt/deluge') }}:/config
 
-  {% if enable_stremio is true %}
+  {% if stremio_enabled is true %}
   # Streaming service
   stremio-service:
     container_name: {{ stremio_container_name | default('stremio') }}
@@ -71,7 +71,7 @@ services:
       - {{ stremio_data_path | default('/opt/stremio') }}:/root/.stremio-server
   {% endif %}
 
-  {% if enable_prowlarr is true %}
+  {% if prowlarr_enabled is true %}
   # Prowlarr is our torrent indexer/searcher. Sonarr/Radarr use Prowlarr as a source
   prowlarr:
     container_name: {{ prowlarr_container_name | default('prowlarr') }}
@@ -90,7 +90,7 @@ services:
       - {{ prowlarr_data_path | default('/opt/prowlarr') }}:/config
   {% endif %}
 
-  {% if enable_sonarr is true %}
+  {% if sonarr_enabled is true %}
 # Sonarr is used to query, add downloads to the download queue and index TV shows
   sonarr:
     container_name: {{ sonarr_container_name | default('sonarr') }}
@@ -111,7 +111,7 @@ services:
       - {{ sonarr_data_path | default('/opt/sonarr') }}:/config
   {% endif %}
 
-  {% if enable_radarr is true %}
+  {% if radarr_enabled is true %}
 # Radarr is used to query, add downloads to the download queue and index Movies
   radarr:
     container_name: {{ radarr_container_name | default('radarr') }}
@@ -132,7 +132,7 @@ services:
       - {{ radarr_data_path | default('/opt/radarr') }}:/config
   {% endif %}
 
-  {% if enable_readarr is true %}
+  {% if readarr_enabled is true %}
   readarr:
     container_name: {{ readarr_container_name | default('readarr') }}
     image: lscr.io/linuxserver/readarr:{{ readarr_version | default('nightly') }}
@@ -152,7 +152,7 @@ services:
       - {{ media_downloads_path | default('/mnt/media/downloads') }}:/downloads
   {% endif %}
 
-  {% if enable_lidarr is true %}
+  {% if lidarr_enabled is true %}
   lidarr:
     container_name: {{ lidarr_container_name | default('lidarr') }}
     image: lscr.io/linuxserver/lidarr:{{ lidarr_version | default('latest') }}

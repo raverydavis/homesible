@@ -1,3 +1,4 @@
 .secretfile-*
 .DS_Store
 *.enc
+.vscode

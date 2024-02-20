@@ -19,13 +19,13 @@
 - name: "Create setup for {{ docker_service }} .secretfiles at {{ docker_compose_path }}"
   ansible.builtin.template:
     src: "templates/{{ docker_service }}/secrets/gluetun.secretfile.j2"
-    dest: "{{ docker_compose_path }}/{{ docker_service }}/{{ gluetun_env_file }}"
+    dest: "{{ docker_compose_path }}/{{ docker_service }}/{{ gluetun_env_file | default('.secretfile-gluetun') }}"
   when: docker_service == "media-server"
 
 - name: "Create setup for {{ docker_service }} .secretfiles at {{ docker_compose_path }}"
   ansible.builtin.template:
     src: "templates/{{ docker_service }}/secrets/deluge.secretfile.j2"
-    dest: "{{ docker_compose_path }}/{{ docker_service }}/{{ deluge_env_file }}"
+    dest: "{{ docker_compose_path }}/{{ docker_service }}/{{ deluge_env_file | default('.secretfile-deluge') }}"
   when: docker_service == "media-server"
 
 - name: "Create setup for {{ docker_service }} .secretfiles at {{ docker_compose_path }}"

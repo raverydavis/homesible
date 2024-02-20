@@ -4,6 +4,22 @@
   connection: local
   gather_facts: false
   vars:
+    docker_compose_path: /Users/averyd/docker
+    audiobookshelf_enabled: true
+    filebrowser_enabled: true
+    jellyfin_enabled: true
+    mealie_enabled: true
+    media_server_enabled: true
+    gluetun_vpn_service_provider: "a"
+    gluetun_openvpn_user: "a"
+    gluetun_openvpn_password: "a"
+    stremio_enabled: true
+    prowlarr_enabled: true
+    sonarr_enabled: true
+    radarr_enabled: true
+    readarr_enabled: true
+    lidarr_enabled: true
+    watchtower_enabled: true
     services:
       - name: audiobookshelf
         enabled: "{{ audiobookshelf_enabled | default('false') }}"
@@ -58,7 +74,7 @@
   pre_tasks:
     - set_fact:
         docker_compose_path: "{{ docker_compose_path | default('/opt/docker') }}"
-    - name: "Create {{ item.name }} docker-compose file"
+    - name: "Create services docker-compose file"
       ansible.builtin.include_role:
         name: docker
         tasks_from: create-docker-compose
