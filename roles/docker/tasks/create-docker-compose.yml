@@ -1,0 +1,41 @@
+---
+- name: Check if the path exists
+  ansible.builtin.stat:
+    path: "{{ docker_compose_path }}/{{ docker_service }}"
+  register: path_status
+
+- name: Create the path if it doesn't exist
+  ansible.builtin.file:
+    path: "{{ docker_compose_path }}/{{ docker_service }}"
+    state: directory
+  when: not path_status.stat.exists
+
+- name: "Create {{ docker_service }} .secretfile at {{ docker_compose_path }}"
+  ansible.builtin.template:
+    src: "templates/{{ docker_service }}/.secretfile.j2"
+    dest: "{{ docker_compose_path }}/{{ docker_service }}/.secretfile-{{ docker_service }}"
+  when: not docker_service is match("(media-server|stremio|prowlarr)")
+
+- name: "Create setup for {{ docker_service }} .secretfiles at {{ docker_compose_path }}"
+  ansible.builtin.template:
+    src: "templates/{{ docker_service }}/secrets/gluetun.secretfile.j2"
+    dest: "{{ docker_compose_path }}/{{ docker_service }}/.secretfile-gluetun"
+  when: docker_service == "media-server"
+
+- name: "Create setup for {{ docker_service }} .secretfiles at {{ docker_compose_path }}"
+  ansible.builtin.template:
+    src: "templates/{{ docker_service }}/secrets/deluge.secretfile.j2"
+    dest: "{{ docker_compose_path }}/{{ docker_service }}/.secretfile-deluge"
+  when: docker_service == "media-server"
+
+- name: "Create setup for {{ docker_service }} .secretfiles at {{ docker_compose_path }}"
+  ansible.builtin.template:
+    src: "templates/media-server/secrets/{{ docker_service }}.secretfile.j2"
+    dest: "{{ docker_compose_path }}/media-server/.secretfile-{{ docker_service }}"
+  when: docker_service is match("(stremio|prowlarr)")
+
+- name: "Create {{ docker_service }} docker-compose at {{ docker_compose_path }}"
+  ansible.builtin.template:
+    src: "templates/{{ docker_service }}/docker-compose.j2"
+    dest: "{{ docker_compose_path }}/{{ docker_service }}/docker-compose.yml"
+  when: not docker_service is match("(stremio|prowlarr)")

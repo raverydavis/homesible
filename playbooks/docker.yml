@@ -1,0 +1,52 @@
+---
+- name: Test docker templates
+  hosts: local
+  connection: local
+  gather_facts: false
+  vars:
+    services:
+      - name: audiobookshelf
+        enabled: "{{ audiobookshelf_enabled | default('false') }}"
+      - name: filebrowser
+        enabled: "{{ filebrowser_enabled | default('false') }}"
+      - name: jellyfin
+        enabled: "{{ jellyfin_enabled | default('false') }}"
+      - name: mealie
+        enabled: "{{ mealie_enabled | default('false') }}"
+      - name: media-server
+        enabled: "{{ media_server_enabled | default('false') }}"
+      - name: stremio
+        enabled: "{{ stremio_enabled | default('false') }}"
+      - name: prowlarr
+        enabled: "{{ prowlarr_enabled | default('false') }}"
+      - name: sonarr
+        enabled: "{{ sonarr_enabled | default('false') }}"
+      - name: radarr
+        enabled: "{{ radarr_enabled | default('false') }}"
+      - name: readarr
+        enabled: "{{ readarr_enabled | default('false') }}"
+      - name: lidarr
+        enabled: "{{ lidarr_enabled | default('false') }}"
+      - name: doplarr
+        enabled: "{{ doplarr_enabled | default('false') }}"
+      - name: onedev
+        enabled: "{{ onedev_enabled | default('false') }}"
+      - name: romm
+        enabled: "{{ romm_enabled | default('false') }}"
+      - name: ryot
+        enabled: "{{ ryot_enabled | default('false') }}"
+      - name: watchtower
+        enabled: "{{ watchtower_enabled | default('false') }}"
+  pre_tasks:
+    - set_fact:
+        docker_compose_path: "{{ docker_compose_path | default('/opt/docker') }}"
+    - name: "Create {{ item.name }} docker-compose file"
+      ansible.builtin.include_role:
+        name: docker
+        tasks_from: create-docker-compose
+      vars:
+        docker_service: "{{ item.name }}"
+      loop: "{{ services }}"
+      when: item.enabled is true
+      loop_control:
+        loop_var: item
