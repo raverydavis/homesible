@@ -1,0 +1,6 @@
+---
+- name: Check if the path exists
+  ansible.builtin.stat:
+    path: "{{ docker_compose_path }}/{{ docker_service }}"
+  register: path_status
+  tags: never, install, config

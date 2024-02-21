@@ -1,0 +1,5 @@
+---
+- name: "Docker compose {{ docker_service }} up"
+  ansible.builtin.command:
+    cmd: "docker-compose -f {{ docker_compose_path }}/{{ docker_service }}/docker-compose.yml up -d"
+  tags: never, up, compose

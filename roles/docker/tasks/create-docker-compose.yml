@@ -3,39 +3,46 @@
   ansible.builtin.stat:
     path: "{{ docker_compose_path }}/{{ docker_service }}"
   register: path_status
-
+  tags: never, install, config
+  
 - name: Create the path if it doesn't exist
   ansible.builtin.file:
     path: "{{ docker_compose_path }}/{{ docker_service }}"
     state: directory
   when: not path_status.stat.exists and not docker_service is match("(stremio|prowlarr|sonarr|radarr|readarr|lidarr|recyclarr|doplarr)")
+  tags: never, install, config
 
 - name: "Create {{ docker_service }} .secretfile at {{ docker_compose_path }}"
   ansible.builtin.template:
     src: "templates/{{ docker_service }}/.secretfile.j2"
     dest: "{{ docker_compose_path }}/{{ docker_service }}/{{ env_file }}"
   when: not docker_service is match("(media-server|stremio|prowlarr|sonarr|radarr|readarr|lidarr|recyclarr|doplarr)")
+  tags: never, install, config
 
 - name: "Create setup for {{ docker_service }} .secretfiles at {{ docker_compose_path }}"
   ansible.builtin.template:
     src: "templates/{{ docker_service }}/secrets/gluetun.secretfile.j2"
     dest: "{{ docker_compose_path }}/{{ docker_service }}/{{ gluetun_env_file | default('.secretfile-gluetun') }}"
   when: docker_service == "media-server"
+  tags: never, install, config
 
 - name: "Create setup for {{ docker_service }} .secretfiles at {{ docker_compose_path }}"
   ansible.builtin.template:
     src: "templates/{{ docker_service }}/secrets/deluge.secretfile.j2"
     dest: "{{ docker_compose_path }}/{{ docker_service }}/{{ deluge_env_file | default('.secretfile-deluge') }}"
   when: docker_service == "media-server"
+  tags: never, install, config
 
 - name: "Create setup for {{ docker_service }} .secretfiles at {{ docker_compose_path }}"
   ansible.builtin.template:
     src: "templates/media-server/secrets/{{ docker_service }}.secretfile.j2"
     dest: "{{ docker_compose_path }}/media-server/.secretfile-{{ docker_service }}"
   when: docker_service is match("(stremio|prowlarr|sonarr|radarr|readarr|lidarr|recyclarr|doplarr)")
+  tags: never, install, config
 
 - name: "Create {{ docker_service }} docker-compose at {{ docker_compose_path }}"
   ansible.builtin.template:
     src: "templates/{{ docker_service }}/docker-compose.j2"
     dest: "{{ docker_compose_path }}/{{ docker_service }}/docker-compose.yml"
   when: not docker_service is match("(stremio|prowlarr|sonarr|radarr|readarr|lidarr|recyclarr|doplarr)")
+  tags: never, install, config

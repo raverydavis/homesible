@@ -1,5 +1,15 @@
 ---
-- name: write hostname using jinja2
-  ansible.builtin.template:
-    src: templates/audiobookshelf/docker-compose.j2
-    dest: /Users/averyd/dc-test.yml
+- name: Check path
+  import_tasks: check-path.yml
+
+- name: Create path
+  import_tasks: create-path.yml
+
+- name: Create docker-compose
+  import_tasks: create-docker-compose.yml
+
+- name: Create config
+  import_tasks: create-config.yml
+
+- name: docker-compose up
+  import_tasks: docker-compose-up.yml

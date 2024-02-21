@@ -2,50 +2,66 @@ services: # TODO make this a host / group var ? it's only needed when building t
   - name: audiobookshelf
     enabled: "{{ audiobookshelf_enabled | default('false') }}"
     env_file: "{{ audiobookshelf_env_file | default('.secretfile-audiobookshelf') }}"
+    config_path: "{{ audiobookshelf_metadata_path | default('./examples/docker/audiobookshelf/data') }}"
   - name: filebrowser
     enabled: "{{ filebrowser_enabled | default('false') }}"
     env_file: "{{ filebrowser_env_file | default('.secretfile-filebrowser') }}"
+    config_path: "{{ filebrowser_config_path | default('./examples/docker/filebrowser/data') }}"
   - name: jellyfin
     enabled: "{{ jellyfin_enabled | default('false') }}"
     env_file: "{{ jellyfin_env_file | default('.secretfile-jellyfin') }}"
+    config_path: "{{ jellyfin_config_path | default('./examples/docker/jellyfin/data') }}"
   - name: mealie
     enabled: "{{ mealie_enabled | default('false') }}"
     env_file: "{{ mealie_env_file | default('.secretfile-mealie') }}"
+    config_path: "{{ mealie_config_path | default('./examples/docker/mealie/data') }}"
   - name: media-server
     enabled: "{{ media_server_enabled | default('false') }}"
   - name: stremio
     enabled: "{{ stremio_enabled | default('false') }}"
     env_file: "{{ stremio_env_file | default('.secretfile-stremio') }}"
+    config_path: "{{ stremio_config_path | default('./examples/docker/stremio/data') }}"
   - name: prowlarr
     enabled: "{{ prowlarr_enabled | default('false') }}"
     env_file: "{{ prowlarr_env_file | default('.secretfile-prowlarr') }}"
+    config_path: "{{ prowlarr_config_path | default('./examples/docker/prowlarr/data') }}"
   - name: sonarr
     enabled: "{{ sonarr_enabled | default('false') }}"
     env_file: "{{ sonarr_env_file | default('.secretfile-sonarr') }}"
+    config_path: "{{ sonarr_config_path | default('./examples/docker/sonarr/data') }}"
   - name: radarr
     enabled: "{{ radarr_enabled | default('false') }}"
     env_file: "{{ radarr_env_file | default('.secretfile-radarr') }}"
+    config_path: "{{ radarr_config_path | default('./examples/docker/radarr/data') }}"
   - name: readarr
     enabled: "{{ readarr_enabled | default('false') }}"
     env_file: "{{ readarr_env_file | default('.secretfile-readarr') }}"
+    config_path: "{{ readarr_config_path | default('./examples/docker/readarr/data') }}"
   - name: lidarr
     enabled: "{{ lidarr_enabled | default('false') }}"
     env_file: "{{ lidarr_env_file | default('.secretfile-lidarr') }}"
+    config_path: "{{ lidarr_config_path | default('./examples/docker/lidarr/data') }}"
   - name: recyclarr
     enabled: "{{ recyclarr_enabled | default('false') }}"
     env_file: "{{ recyclarr_env_file | default('.secretfile-recyclarr') }}"
+    config_path: "{{ recyclarr_config_path | default('./examples/docker/recyclarr/data') }}"
   - name: doplarr
     enabled: "{{ doplarr_enabled | default('false') }}"
     env_file: "{{ doplarr_env_file | default('.secretfile-doplarr') }}"
+    config_path: "{{ doplarr_config_path | default('./examples/docker/doplarr/data') }}"
   - name: onedev
     enabled: "{{ onedev_enabled | default('false') }}"
     env_file: "{{ onedev_env_file | default('.secretfile-onedev') }}"
+    config_path: "{{ onedev_config_path | default('./examples/docker/onedev/data') }}"
   - name: romm
     enabled: "{{ romm_enabled | default('false') }}"
     env_file: "{{ romm_env_file | default('.secretfile-romm') }}"
+    config_path: "{{ romm_config_path | default('./examples/docker/romm/data') }}"
   - name: ryot
     enabled: "{{ ryot_enabled | default('false') }}"
     env_file: "{{ ryot_env_file | default('.secretfile-ryot') }}"
+    config_path: "{{ ryot_config_path | default('./examples/docker/ryot/data') }}"
   - name: watchtower
     enabled: "{{ watchtower_enabled | default('false') }}"
     env_file: "{{ watchtower_env_file | default('.secretfile-watchtower') }}"
+    config_path: "{{ watchtower_config_path | default('./examples/docker/watchtower/data') }}"

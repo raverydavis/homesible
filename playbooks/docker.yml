@@ -8,18 +8,21 @@
     - name: Set docker_compose_path
       set_fact:
         docker_compose_path: "{{ docker_compose_path | default('../examples/docker') }}"
+      tags: always, install, config, up, compose
     - name: Include services vars
       include_vars: services.yml
+      tags: always, install, config, up, compose
 
   tasks:
-    - name: "Create services docker-compose file"
-      ansible.builtin.include_role:
+    - name: "Standup services"
+      include_role:
         name: docker
-        tasks_from: create-docker-compose
       vars:
         docker_service: "{{ item.name }}"
         env_file: "{{ item.env_file }}"
+        config_path: "{{ item.config_path }}"
       loop: "{{ services }}"
       when: item.enabled is true
       loop_control:
         loop_var: item
+      tags: always, install, config, up, compose

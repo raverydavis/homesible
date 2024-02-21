@@ -1,0 +1,7 @@
+---
+- name: Create the path if it doesn't exist
+  ansible.builtin.file:
+    path: "{{ docker_compose_path }}/{{ docker_service }}"
+    state: directory
+  when: not path_status.stat.exists and not docker_service is match("(stremio|prowlarr|sonarr|radarr|readarr|lidarr|recyclarr|doplarr)")
+  tags: never, install, config

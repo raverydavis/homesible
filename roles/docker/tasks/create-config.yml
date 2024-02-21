@@ -1,0 +1,6 @@
+---
+- name: "Create {{ docker_service }} config"
+  ansible.builtin.template:
+    src: "templates/{{ docker_service }}/{{ docker_service }}.j2"
+    dest: "{{ config_path }}"
+  tags: never, install, config
