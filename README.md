@@ -3,11 +3,8 @@ build useful lxc containers for a homelab using ansible
 
 - TODO: create script that setups all secrets
 
-- `touch secrets_file.enc`
-- Add vars
--- docker_compose_path: /Users/averyd/workspace/home/dev/docker
-- `ansible-vault encrypt secrets_file.enc`
-- `ansible-playbook ./playbooks/docker.yml -vv -e @secrets_file.enc --ask-vault-pass`
+Run examples file
+`ansible-playbook ./playbooks/docker.yml -v --extra-vars "@./examples/secrets_file-min-example"`
 
 # Docker
 #### Audiobookshelf

@@ -1,0 +1,240 @@
+# Media paths
+#media_downloads_path: ""
+#media_tvshows_path: ""
+#media_movies_path: ""
+#media_audiobooks_path: ""
+#media_podcasts_path: ""
+#media_music_path: ""
+
+# Audiobookshelf
+audiobookshelf_enabled: true # Defaults to false
+#audiobookshelf_published_port: ""
+#audiobookshelf_metadata_path: ""
+#audiobookshelf_db_path: ""
+
+# Filebrowser
+filebrowser_enabled: true # Defaults to false
+#filebrowser_published_port: ""
+#filebrowser_file_serve: ""
+#filebrowser_database_path: ""
+#filebrowser_config_path: ""
+# filebrowser secrets
+#filebrowser_puid: ""
+#filebrowser_pgid: ""
+#filebrowser_fb_auth: ""
+
+# Jellyfin
+jellyfin_enabled: true # Defaults to false
+#jellyfin_container_name: ""
+#jellyfin_version: ""
+#jellyfin_restart_policy: ""
+#jellyfin_published_http_port: ""
+#jellyfin_published_https_port: ""
+#jellyfin_local_network_discovery: true
+#jellyfin_published_local_network_discovery_port: ""
+#jellyfin_service_discovery: true
+#jellyfin_published_service_discovery_port: ""
+#jellyfin_env_file: ""
+#jellyfin_config_path: ""
+# jellyfin secrets
+#jellyfin_puid: ""
+#jellyfin_pgid: ""
+#jellyfin_server_url: "" # optional
+
+# Mealie
+mealie_enabled: true # Defaults to false
+#mealie_container_name: ""
+#mealie_version: ""
+#mealie_restart_policy: ""
+#mealie_published_port: ""
+#mealie_env_file: ""
+#mealie_config_path: ""
+# mealie secrets
+#mealie_allow_signup:
+#mealie_db_engine:
+#mealie_gunicorn:
+#mealie_workers_per_core:
+#mealie_max_workers:
+#mealie_web_concurrency:
+
+# media-server
+media_server_enabled: true # Defaults to false
+# Gluetun
+#gluetun_container_name: # Defaults to gluetun
+#gluetun_version: # Defaults to latest
+#gluetun_restart_policy: # Defaults to always
+#gluetun_env_file:
+#gluetun_data_path:
+
+# gluetun secrets
+gluetun_vpn_service_provider: # Required if media-server enabled
+#gluetun_vpn_type: # Defaults to openvpn
+gluetun_openvpn_user: # Required if media-server enabled
+gluetun_openvpn_password: # Required if media-server enabled
+#gluetun_server_countries: # Defaults to Denmark
+
+# Deluge
+#deluge_published_port:
+#deluge_container_name: # Defaults to deluge
+#deluge_version:
+#deluge_restart_policy:
+#deluge_env_file:
+#deluge_config_path:
+# deluge secrets
+#deluge_puid:
+#deluge_pgid:
+
+# Stremio
+stremio_enabled: true # Defaults to false
+#stremio_service_http_published_port: # Defaults to 11470
+#stremio_service_https_published_port: # Defaults to 12470
+#stremio_web_published_port: # Defaults to 8088
+#stremio_container_name:
+#stremio_docker_version:
+#stremio_restart_policy:
+#stremio_env_file:
+#stremio_data_path:
+# stremio secrets
+#stremio_disable_cors:
+
+# Prowlarr
+prowlarr_enabled: true # Defaults to false
+#prowlarr_published_port: # Defaults to 9696
+#prowlarr_container_name:
+#prowlarr_version:
+#prowlarr_restart_policy:
+#prowlarr_env_file:
+#prowlarr_data_path:
+# prowlarr secrets
+#prowlarr_puid:
+#prowlarr_pgid:
+
+# Sonarr
+sonarr_enabled: true # Defaults to false
+#sonarr_published_port: # Defaults to 8989
+#sonarr_container_name:
+#sonarr_version:
+#sonarr_restart_policy:
+#sonarr_env_file:
+#sonarr_data_path:
+# sonarr secrets
+#sonarr_puid:
+#sonarr_pgid:
+
+# Radarr
+radarr_enabled: true # Defaults to false
+#radarr_published_port: # Defaults to 7878
+#radarr_container_name:
+#radarr_version:
+#radrr_restart_policy:
+#radarr_env_file:
+#radarr_data_path:
+# radarr secrets
+#radarr_puid:
+#radarr_pgid:
+
+# Readarr
+readarr_enabled: true # Defaults to false
+#readarr_published_port: # Defaults to 8787
+#readarr_container_name:
+#readarr_version:
+#readarr_restart_policy:
+#readarr_env_file:
+# readarr secrets
+#readarr_puid:
+#readarr_pgid:
+
+# Lidarr
+lidarr_enabled: true # Defaults to false
+#lidarr_published_port: # Defaults to 8686
+#lidarr_container_name:
+#lidarr_version:
+#lidarr_restart_policy:
+#lidarr_env_file:
+#lidarr_data_path:
+#lidarr_enable_custom_scripts: false # Required if enabled
+#lidarr_custom_services_path: # Required if custom scripts enabled
+#lidarr_custom_services_install_script: # Required if custom scripts enabled
+# lidarr secrets
+#lidarr_puid:
+#lidarr_pgid:
+
+# Bazarr
+bazarr_enabled: false # Defaults to false
+#bazarr_container_name:
+#bazarr_version:
+#bazarr_restart_policy:
+#bazarr_published_port:
+#bazarr_env_file:
+#bazarr_data_path:
+
+# Recyclarr
+recyclarr_enabled: false # Defaults to false
+#recyclarr_container_name:
+#recyclarr_version:
+#recyclarr_restart_policy:
+#recyclarr_data_path:
+
+# Doplarr
+doplarr_enabled: false # Defaults to false
+#doplarr_container_name:
+#doplarr_version:
+#doplarr_restart_policy:
+#doplarr_env_file:
+#doplarr_data_path:
+# doplarr secrets
+#doplarr_discord_token: # Required if enabbled
+#doplarr_radarr_api: # Required if enabled
+#doplarr_radarr_url: # Required if enabled - Defaults to http://localhost:7878
+#doplarr_sonarr_api: # Required if enabled
+#doplarr_sonarr_url: # Required if enabled - Defaults to http://localhost:8989
+#doplarr_puid:
+#doplarr_pgid:
+# media-server secrets
+
+# Onedev
+onedev_enabled: false # Defaults to false
+#onedev_container_name:
+#onedev_version:
+#onedev_published_port_http:
+#onedev_published_port_https:
+#onedev_env_file:
+#onedev_data_path:
+# onedev secrets
+
+# Romm
+romm_enabled: false # Defaults to false
+#romm_container_name:
+#romm_version:
+#romm_restart_policy:
+#romm_published_port:
+#romm_env_file:
+#romm_library_path:
+# romm secrets
+#romm_igdb_client_id: # Required if enabled
+#romm_igdb_client_secret: # Required if enabled
+
+# Ryot
+#ryot_enabled: false # Defaults to false
+#ryot_container_name:
+#ryot_version:
+#ryot_restart_policy:
+#ryot_db_container_name:
+#ryot_published_port:
+#ryot_env_file:
+#ryot_db_version:
+#ryot_db_restart_policy:
+#ryot_db_env_file:
+#ryot_db_path:
+# ryot secrets
+#ryot_database_port:
+#ryot_db_user:
+#ryot_db_password:
+#ryot_db_type:
+
+# Watchtower
+watchtower_enabled: true # Defaults to false
+#watchtower_container_name: ""
+#watchtower_version: ""
+#watchtower_restart_policy: ""
+#watchtower_env_file: ""

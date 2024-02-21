@@ -9,10 +9,10 @@ services:
       - {{ jellyfin_published_https_port | default('8920') }}:8920 # optional Https webUI (you need to set up your own certificate).
       {% endif %}
       {% if jellyfin_local_network_discovery is true %}
-      - 7359:7359/udp # optional Allows clients to discover Jellyfin on the local network.
+      - {{ jellyfin_published_local_network_discovery_port | default('7359') }}:7359/udp # optional Allows clients to discover Jellyfin on the local network.
       {% endif %}
       {% if jellyfin_service_discovery is true %}
-      - 1900:1900/udp # optional Service discovery used by DNLA and clients.
+      - {{ jellyfin_published_service_discovery_port | default('7359') }}:1900/udp # optional Service discovery used by DNLA and clients.
       {% endif %}
    env_file: {{ jellyfin_env_file | default('.secretfile-jellyfin') }}
     volumes:

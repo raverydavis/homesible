@@ -176,7 +176,7 @@ services:
       {% endif %}
   {% endif %}
 
-  {% if enable_bazarr is true %}
+  {% if bazarr_enabled is true %}
   bazarr:
     container_name: {{ bazarr_container_name | default('bazarr') }}
     image: lscr.io/linuxserver/bazarr:{{ bazarr_version | default('latest') }}
@@ -197,7 +197,7 @@ services:
       - {{ bazarr_data_path | default('/opt/bazarr') }}:/config
   {% endif %}
 
-  {% if enable_recyclarr is true %}
+  {% if recyclarr_enabled is true %}
   recyclarr:
     container_name: {{ recyclarr_container_name | default('recyclarr') }}
     image: ghcr.io/recyclarr/recyclarr:{{ recyclarr_version | default('latest') }}
@@ -214,7 +214,7 @@ services:
       - {{ recyclarr_data_path | default('/opt/recyclarr') }}:/config
   {% endif %}
 
-  {% if enable_doplarr is true %}
+  {% if doplarr_enabled is true %}
   doplarr:
     container_name: {{ doplarr_container_name | default('doplarr') }}
     image: lscr.io/linuxserver/doplarr:{{ doplarr_version | default('latest') }}
@@ -225,7 +225,7 @@ services:
       {{ radarr_container_name | default('radarr') }}:
         condition: service_started
         restart: true
-    restart: {{ recyclarr_restart_policy | default('unless-stopped') }}
+    restart: {{ doplarr_restart_policy | default('unless-stopped') }}
     env_file: {{ doplarr_env_file | default('.secretfile-doplarr') }}
     volumes:
       - {{ doplarr_data_path | default('/opt/doplarr') }}:/config
