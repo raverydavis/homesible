@@ -1,0 +1,9 @@
+---
+- name: We test things
+  hosts: local
+  connection: local
+  gather_facts: false
+  pre_tasks:
+    - name: Test output
+      ansible.builtin.shell: |
+        echo 'Test'
