@@ -1,17 +1,4 @@
 ---
-- name: Check if the path exists
-  ansible.builtin.stat:
-    path: "{{ docker_compose_path }}/{{ docker_service }}"
-  register: path_status
-  tags: never, install, config
-  
-- name: Create the path if it doesn't exist
-  ansible.builtin.file:
-    path: "{{ docker_compose_path }}/{{ docker_service }}"
-    state: directory
-  when: not path_status.stat.exists and not docker_service is match("(stremio|prowlarr|sonarr|radarr|readarr|lidarr|recyclarr|doplarr)")
-  tags: never, install, config
-
 - name: "Create {{ docker_service }} .secretfile at {{ docker_compose_path }}"
   ansible.builtin.template:
     src: "templates/{{ docker_service }}/.secretfile.j2"

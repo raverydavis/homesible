@@ -1,7 +1,6 @@
 ---
-- name: Test docker templates
-  hosts: local
-  connection: local
+- name: Docker playbook
+  hosts: "{{ docker_host | default('local') }}"
   gather_facts: false
 
   pre_tasks:

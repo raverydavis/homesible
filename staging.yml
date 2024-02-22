@@ -2,5 +2,4 @@ ungrouped:
   hosts:
     local: # staging = local
       ansible_host: localhost
-    proxmox: # production = proxmox
-      ansible_host: 192.168.4.86 # TODO setup hostname / fqdn - req: setup hostnames & mapping / local dns for fqdn mapping
+      ansible_connection: local
