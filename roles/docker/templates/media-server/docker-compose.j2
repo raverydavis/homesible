@@ -15,26 +15,26 @@ services:
       - {{ deluge_published_port | default('8112') }}:8112 # deluge webui
       - 6881:6881 # deluge
       - 6881:6881/udp # deluge
-      {% if stremio_enabled is true %}
+{% if stremio_enabled is true %}
       - {{ stremio_service_http_published_port | default('11470') }}:11470 # stremio-service
       - {{ stremio_service_https_published_port | default('12470') }}:12470 # stremio-service
       - {{ stremio_web_published_port | default('8088') }}:8080 # stremio-web
-      {% endif %}
-      {% if prowlarr_enabled is true %}
+{% endif %}
+{% if prowlarr_enabled is true %}
       - {{ prowlarr_published_port | default('9696') }}:9696 # prowlarr
-      {% endif %}
-      {% if sonarr_enabled is true %}
+{% endif %}
+{% if sonarr_enabled is true %}
       - {{ sonarr_published_port | default('8989') }}:8989 # sonarr
-      {% endif %}
-      {% if radarr_enabled is true %}
+{% endif %}
+{% if radarr_enabled is true %}
       - {{ radarr_published_port | default('7878') }}:7878 # radarr
-      {% endif %}
-      {% if readarr_enabled is true %}
+{% endif %}
+{% if readarr_enabled is true %}
       - {{ readarr_published_port | default('8787') }}:8787 # readarr
-      {% endif %}
-      {% if lidarr_enabled is true %}
+{% endif %}
+{% if lidarr_enabled is true %}
       - {{ lidarr_published_port | default('8686') }}:8686 # lidarr
-      {% endif %}
+{% endif %}
     env_file: {{ gluetun_env_file | default('.secretfile-gluetun') }}
     volumes:
       - {{ gluetun_data_path | default('/opt/gluetun') }}:/gluetun
@@ -42,7 +42,7 @@ services:
   # Torrent client
   deluge:
     container_name: {{ deluge_container_name | default('deluge') }}
-    image: lscr.io/linuxserver/deluge:{{ deluge_version | default('latest') }}
+    image: ghcr.io/linuxserver/deluge:{{ deluge_version | default('latest') }}
     depends_on:
       {{ gluetun_container_name | default('gluetun') }}:
         condition: service_healthy
@@ -53,8 +53,7 @@ services:
     volumes:
       - {{ media_downloads_path | default('/mnt/media/downloads') }}:/downloads
       - {{ deluge_config_path | default('/opt/deluge') }}:/config
-
-  {% if stremio_enabled is true %}
+{% if stremio_enabled is true %}
   # Streaming service
   stremio-service:
     container_name: {{ stremio_container_name | default('stremio') }}
@@ -69,13 +68,12 @@ services:
     env_file: {{ stremio_env_file | default('.secretfile-stremio') }}
     volumes:
       - {{ stremio_data_path | default('/opt/stremio') }}:/root/.stremio-server
-  {% endif %}
-
-  {% if prowlarr_enabled is true %}
+{% endif %}
+{% if prowlarr_enabled is true %}
   # Prowlarr is our torrent indexer/searcher. Sonarr/Radarr use Prowlarr as a source
   prowlarr:
     container_name: {{ prowlarr_container_name | default('prowlarr') }}
-    image: lscr.io/linuxserver/prowlarr:{{ prowlarr_version | default('latest') }}
+    image: ghcr.io/linuxserver/prowlarr:{{ prowlarr_version | default('latest') }}
     depends_on:
       {{ gluetun_container_name | default('gluetun') }}:
         condition: service_healthy
@@ -88,13 +86,12 @@ services:
     env_file: {{ prowlarr_env_file | default('.secretfile-prowlarr') }}
     volumes:
       - {{ prowlarr_data_path | default('/opt/prowlarr') }}:/config
-  {% endif %}
-
-  {% if sonarr_enabled is true %}
+{% endif %}
+{% if sonarr_enabled is true %}
 # Sonarr is used to query, add downloads to the download queue and index TV shows
   sonarr:
     container_name: {{ sonarr_container_name | default('sonarr') }}
-    image: lscr.io/linuxserver/sonarr:{{ sonarr_version | default('latest') }}
+    image: ghcr.io/linuxserver/sonarr:{{ sonarr_version | default('latest') }}
     depends_on:
       {{ gluetun_container_name | default('gluetun') }}:
         condition: service_healthy
@@ -109,13 +106,12 @@ services:
       - {{ media_tvshows_path | default('/mnt/media/tvshows') }}:/tvshows
       - {{ media_downloads_path | default('/mnt/media/downloads') }}:/downloads
       - {{ sonarr_data_path | default('/opt/sonarr') }}:/config
-  {% endif %}
-
-  {% if radarr_enabled is true %}
+{% endif %}
+{% if radarr_enabled is true %}
 # Radarr is used to query, add downloads to the download queue and index Movies
   radarr:
     container_name: {{ radarr_container_name | default('radarr') }}
-    image: lscr.io/linuxserver/radarr:{{ radarr_version | default('latest') }}
+    image: ghcr.io/linuxserver/radarr:{{ radarr_version | default('latest') }}
     depends_on:
       {{ gluetun_container_name | default('gluetun') }}:
         condition: service_healthy
@@ -130,12 +126,11 @@ services:
       - {{ media_movies_path | default('/mnt/media/movies') }}:/movies
       - {{ media_downloads_path | default('/mnt/media/downloads') }}:/downloads
       - {{ radarr_data_path | default('/opt/radarr') }}:/config
-  {% endif %}
-
-  {% if readarr_enabled is true %}
+{% endif %}
+{% if readarr_enabled is true %}
   readarr:
     container_name: {{ readarr_container_name | default('readarr') }}
-    image: lscr.io/linuxserver/readarr:{{ readarr_version | default('nightly') }}
+    image: ghcr.io/linuxserver/readarr:{{ readarr_version | default('nightly') }}
     depends_on:
       {{ gluetun_container_name | default('gluetun') }}:
         condition: service_healthy
@@ -150,12 +145,11 @@ services:
       - {{ media_audiobooks_path | default('/mnt/media/audiobooks') }}:/audiobooks
       - {{ media_podcasts_path | default('/mnt/media/podcasts') }}:/podcasts
       - {{ media_downloads_path | default('/mnt/media/downloads') }}:/downloads
-  {% endif %}
-
-  {% if lidarr_enabled is true %}
+{% endif %}
+{% if lidarr_enabled is true %}
   lidarr:
     container_name: {{ lidarr_container_name | default('lidarr') }}
-    image: lscr.io/linuxserver/lidarr:{{ lidarr_version | default('latest') }}
+    image: ghcr.io/linuxserver/lidarr:{{ lidarr_version | default('latest') }}
     depends_on:
       {{ gluetun_container_name | default('gluetun') }}:
         condition: service_healthy
@@ -170,16 +164,15 @@ services:
       - {{ media_music_path | default('/mnt/media/music') }}:/music
       - {{ media_downloads_path | default('/mnt/media/downloads') }}:/downloads
       - {{ lidarr_data_path | default('/opt/lidarr') }}:/config
-      {% if lidarr_enable_custom_scripts is true %}
+{% if lidarr_enable_custom_scripts is true %}
       - {{ lidarr_custom_services_path | default('/opt/lidarr') }}:/custom-services.d
       - {{ lidarr_custom_services_install_script | default('/opt/lidarr') }}:/custom-cont-init.d
-      {% endif %}
-  {% endif %}
-
-  {% if bazarr_enabled is true %}
+{% endif %}
+{% endif %}
+{% if bazarr_enabled is true %}
   bazarr:
     container_name: {{ bazarr_container_name | default('bazarr') }}
-    image: lscr.io/linuxserver/bazarr:{{ bazarr_version | default('latest') }}
+    image: ghcr.io/linuxserver/bazarr:{{ bazarr_version | default('latest') }}
     depends_on:
       {{ sonarr_container_name | default('sonarr') }}:
         condition: service_started
@@ -195,9 +188,8 @@ services:
       - {{ media_tvshows_path | default('/mnt/media/tvshows') }}:/tvshows
       - {{ media_movies_path | default('/mnt/media/movies') }}:/movies
       - {{ bazarr_data_path | default('/opt/bazarr') }}:/config
-  {% endif %}
-
-  {% if recyclarr_enabled is true %}
+{% endif %}
+{% if recyclarr_enabled is true %}
   recyclarr:
     container_name: {{ recyclarr_container_name | default('recyclarr') }}
     image: ghcr.io/recyclarr/recyclarr:{{ recyclarr_version | default('latest') }}
@@ -212,12 +204,11 @@ services:
     user: 1000:1000
     volumes:
       - {{ recyclarr_data_path | default('/opt/recyclarr') }}:/config
-  {% endif %}
-
-  {% if doplarr_enabled is true %}
+{% endif %}
+{% if doplarr_enabled is true %}
   doplarr:
     container_name: {{ doplarr_container_name | default('doplarr') }}
-    image: lscr.io/linuxserver/doplarr:{{ doplarr_version | default('latest') }}
+    image: ghcr.io/linuxserver/doplarr:{{ doplarr_version | default('latest') }}
     depends_on:
       {{ sonarr_container_name | default('sonarr') }}:
         condition: service_started
@@ -229,4 +220,4 @@ services:
     env_file: {{ doplarr_env_file | default('.secretfile-doplarr') }}
     volumes:
       - {{ doplarr_data_path | default('/opt/doplarr') }}:/config
-  {% endif %}
+{% endif %}

@@ -1,0 +1,22 @@
+- name: Check path
+  import_tasks: check-path.yml
+  tags: always, install, config, up, compose
+
+- name: Create path
+  import_tasks: create-path.yml
+  tags: always, install, config, up, compose
+
+- name: Create docker-compose
+  import_tasks: create-docker-compose.yml
+  tags: always, install, config, up, compose
+
+- name: Create env file
+  import_tasks: create-env-file.yml
+  tags: always, install, config, up, compose
+
+- name: Create config
+  import_tasks: create-config.yml
+  tags: always, install, config, up, compose
+
+- name: docker-compose up
+  import_tasks: docker-compose-up.yml
